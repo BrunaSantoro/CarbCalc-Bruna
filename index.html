@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8"> <!--define a codificação e garante que os acentos e símbolos apareçam corretamente-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!--para ajustar a responsividade da tela-->
+    <title>Calculadora - Pegada de Carbono</title> <!--esta inserinno um titúlo na páginaS-->
+    <script src="https://cdn.tailwindcss.com"></script> <!--ira carregar o site mencionado onde ele é um framework de CSS utilitário, que permite estilizar elementos HTML usando classes prontas-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shepherd.js/7.1.2/css/shepherd.min.css" integrity="sha512-k4DlYDc0mf1H92BOi4i/3VKmE2y5T5CuMAFGepXwYD39pmzeoJ7vIUM57esJkGtDNrWcX0V74cHPB/78415VdQ==" crossorigin="anonymous" referrerpolicy="no-referrer" /> <!--ia carregar o CSS do Shepherd.js que é uma biblioteca do JS-->
+</head>
+
+<body class="bg-gradient-to-r from-violet-500 to-fuchsia-500"> <!--esta aplicando um degrade na pagina onde as cores são violeta e fúcsia-->
+    <div class="container mx-auto mt-8"> <!--esta criando uma div centralizada e com espaço-->
+        <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg overflow-hidden"> <!--esta gerando um bloco centralizado e estilizado-->
+            <div class="px-6 py-4"> <!--esta criando um espaço nas laterias e em cima e embaixo-->
+                <h1 class="text-xl font-semibold text-gray-800">Pegada de Carbono</h1> <!--esta criando um tirulo estilizado-->
+                <h2 class="text-md text-gray-600 mt-2">Calculadora Simplificada escopo 1</h2> <!--esta criano um subtitulo-->
+                <form id="carbonForm" class="mt-4"> <!--esta criando um formulário e acessando o ID para enviar os dados-->
+                    <label for="fuel" class="block text-sm font-medium text-gray-700">Quantidade de Combustível Usada (litros):</label> <!-- esta criando uma label para um campo no formulário-->
+                    <input type="number" id="fuel" name="fuel" required step="0.01" min="0" value="0.00"
+                        class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-500"> <!--um campo onde o usuario ira digitar a quantidade de combustivel em litros onde ira realizara a validação do dados e estilo-->
+
+                    <label for="fuelType" class="block mt-4 text-sm font-medium text-gray-700">Tipo de Combustível:</label> <!--esta label esta definindo uma estilização e acessibilidade-->
+                    <select id="fuelType" name="fuelType" class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-500"> <!--esta criando um campo de seleção de opções responsivo e estilizado-->
+                        <option value="diesel">Diesel</option> <!--esta criando uma opção em uma lista-->
+                        <option value="gasolina">Gasolina</option> <!--esta criando uma opção em uma lista-->
+                        <option value="etanol">Etanol</option> <!--esta criando uma opção em uma lista-->
+                        <option value="gnv">Gás Natural Veicular (GNV)</option> <!--esta criando uma opção em uma lista-->
+                    </select>
+
+                    <label for="distance" class="block mt-4 text-sm font-medium text-gray-700">Distância Percorrida (km):</label> <!--esta criando uma label para um campo de entrada-->
+                    <input type="number" id="distance" name="distance" required step="0.01" min="0" max="10000"
+                        value="0.00"
+                        class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-500"> <!--um campo para o usuario informar a distancia percorrida-->
+
+                    <p class="mt-4 text-sm text-gray-600">Fator de emissão de carbono do combustível: 2.68kg CO2/l</p> <!--esta criando um novo paragrafo para informar o fato de emissão de carbono-->
+                    <p class="text-sm text-gray-600">Emissões de carbono por quilômetro: 0.12kg CO2/km</p> <!-- esta criando um novo paragrafo para informar o fator de emissão-->
+                    <button type="submit"
+                        class="mt-4 w-full bg-indigo-500 text-white py-2 px-4 border border-transparent rounded-md shadow-sm hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Calcular
+                    </button> <!--esta criando um botão para realizar o envio do formulario-->
+                </form>
+                <button id="saveDataBtn"
+                    class="mt-4 w-full bg-green-500 text-white py-2 px-4 border border-transparent rounded-md shadow-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                    Salvar Dados
+                </button> <!--esta criando um botão para salvar os dados e salvos no banco-->
+                <button id="loadTableBtn"
+                    class="mt-4 w-full bg-blue-500 text-white py-2 px-4 border border-transparent rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Carregar Tabela
+                </button> <!-- esta criando um botão para carregar os dados e exibir na tela-->
+                <div id="result" class="mt-4"></div> <!--esta criando um espaço para exibir o resultado do calculo-->
+                <div id="savedData" class="mt-8"></div> <!--esta criando uma area para mostrar os dados salvos-->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.0/annyang.min.js"></script> <!--esta carregando um biblioteca que tem o comando de voz no navegador-->
+    <script src="https://cdn.jsdelivr.net/npm/pouchdb@7.2.2/dist/pouchdb.min.js"></script> <!--esta carregando o  pouchdb onde permite armazenar e consultar dados localmente -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shepherd.js/7.1.2/js/shepherd.min.js" integrity="sha512-Sy962BupVURsOoUAJWvZMJOurIl3F8ijnbO1Mx+t8cytaDCjK5TixnayZm3c8v0KSsn9AlTiy+wIL7zQlp1YKA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> <!--esta carregando a biblioteca Shepherd.js que permite criar passos interativos na interface-->
+    <script src="script.js"></script> <!--esta importando o arquvivo JS-->
+</body>
+</html>
